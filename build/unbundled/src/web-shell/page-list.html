@@ -1,0 +1,153 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+
+</head><body><dom-module id="page-list">
+
+    <template>
+
+        <style include="shop-common-styles">.hero-image{position:relative;height:320px;overflow:hidden;margin-bottom:32px;}.hero-image{--shop-image-img:{position:absolute;top:0;bottom:0;left:-9999px;right:-9999px;max-width:none;};}.grid{@apply (--layout-horizontal);@apply (--layout-wrap);@apply (--layout-justified);margin:0 10px 32px 10px;}.grid> a{-webkit-flex:1 1;flex:1 1;-webkit-flex-basis:33%;flex-basis:33%;max-width:33%;text-decoration:none;}@media (max-width: 767px){.hero-image{display:none;}.grid> a{-webkit-flex-basis:50%;flex-basis:50%;max-width:50%;}}</style>
+
+        
+        <app-route route="[[route]]" pattern="/:category" data="{{routeData}}"></app-route>
+
+        
+        
+
+        
+        
+
+        <shop-image alt="[[category.title]]" src="[[category.image]]" placeholder-img="[[category.placeholder]]" class="hero-image"></shop-image>
+
+        <header>
+            <h1>[[category.title]]</h1>
+            <span>[[_getPluralizedQuantity(items.length)]]</span>
+        </header>
+
+        <div class="grid" hidden$="[[failure]]">
+            <template is="dom-repeat" items="[[items]]" initial-count="4">
+                <a href$="/detail/[[item.name]]">
+                    <shop-list-item item-key="{{item.key}}"></shop-list-item>
+                </a>
+            </template>
+        </div>
+
+        
+        <shop-network-warning hidden$="[[!failure]]" offline="[[offline]]" on-try-reconnect="_tryReconnect"></shop-network-warning>
+
+    </template>
+
+    <script>
+        Polymer({
+            is: 'page-list',
+            properties: {
+                category: Object,
+                route: Object,
+                routeData: Object,
+                visible: Boolean,
+                offline: {
+                    type: Boolean,
+                    observer: '_offlineChanged'
+                },
+                failure: {
+                    type: Boolean
+                },
+                items: {
+                    type: Array,
+                    notify: true,
+                    value: []
+                },
+            },
+            observers: [
+                '_categoryChanged(category, visible)',
+                '_changed(routeData)'
+            ],
+
+            _changed: function(routeData) {
+                //reset the items Array
+                this.set('items', []);
+
+
+                if (routeData.category === '') {
+                    return;
+                }
+
+                //get category key by name
+                firebase.database().ref('/shop/' + document.location.hostname + '/categories/byName/' + routeData.category).on('child_added', function(snap) {
+                        let itemKey = snap.val();
+                        //console.log(itemKey);
+                        //get category info
+                        firebase.database().ref('/shop/' + document.location.hostname + '/categories/byId/' + itemKey).on('value', function(snap) {
+                                let category = snap.val();
+                                //console.log(category);
+                                //set category
+                                this.set('category', category);
+                                this.set('failure', false);
+                            }
+                            .bind(this));
+
+                        //set items from category
+                        firebase.database().ref('/shop/' + document.location.hostname + '/categories/byId/' + itemKey + '/items').on('child_added', function(snap) {
+                                let item = snap.val();
+                                //console.log(item);
+                                this.push('items', item);
+                            }
+                            .bind(this));
+                        //firebase.database().ref('/shop/' + document.location.hostname +'/sidebar/items/level2/items/-KJURpcLaiiDDPdUaHtr').set({'key':'-KJURpcLaiiDDPdUaHtr','type':'detail', 'title':'Pant - White Dress Pant', 'name':'pant_-_white_dress_pant'});
+
+                    }
+                    .bind(this));
+
+
+
+
+            },
+
+
+            _getListItems: function(items) {
+                // Return placeholder items when the items haven't loaded yet.
+                return items || [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}];
+            },
+            _getItemHref: function(item) {
+                // By returning null when `itemId` is undefined, the href attribute won't be set and
+                // the link will be disabled.
+                //let link = ['/detail', this.category.name, item.key].join('/');
+                let link = ['/', item.type, item.name].join('/');
+                console.log(item);
+                return link;
+            },
+            _getPluralizedQuantity: function(quantity) {
+                if (!quantity) {
+                    return '';
+                }
+                var pluralizedQ = quantity === 1 ? 'item' : 'items';
+                return '(' + quantity + ' ' + pluralizedQ + ')';
+            },
+            _categoryChanged: function(category, visible) {
+                if (visible) {
+                    this.debounce('change-section', function() {
+                        // Notify the category and the page's title
+                        this.fire('change-section', {
+                            category: category.name,
+                            title: category.title
+                        });
+                    });
+                }
+            },
+            _tryReconnect: function() {
+                //this.$.categoryData.refresh();
+            },
+            _offlineChanged: function(offline) {
+                if (!offline) {
+                    //this._tryReconnect();
+                    this.failure = false;
+                } else {
+                    this.failure = true;
+                }
+            }
+        });
+    </script>
+
+</dom-module>
+</body></html>

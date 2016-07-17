@@ -1,0 +1,70 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/google-youtube/google-youtube.html">
+<link rel="import" href="../../bower_components/google-castable-video/google-castable-video.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/paper-styles/paper-styles-classes.html">
+
+<link href="../dlx-block/dlx-block.html" rel="import">
+
+
+
+</head><body><dom-module id="page-user">
+
+    <template>
+
+        <style include="shop-common-styles shop-button shop-select">:host{display:block;--dlx-video-height:calc(100vw / 1.78);}#content{@apply (--layout-vertical);@apply (--layout-center-justified);}.page-user{}.user-image-container{position:relative;}dlx-block{height:48vh;}dlx-blockFFF::before{content:"";display:block;padding-top:100%;}.detail{width:100%;padding:24px;transition:opacity 0.4s;opacity:0;}.detail[has-content]{opacity:1;}.detail .meta-container{@apply (--layout-vertical);position:relative;margin-bottom:24px;}.detail .meta-dataFFF{width:calc(100% - 116px);}.detail .meta-imageFFF{height:108px;width:108px;position:absolute;top:0;right:0;}.meta-title{@apply (--paper-font-subhead);font-size:24px;font-weight:500;line-height:28px;margin:0;}.price{margin:16px 0 40px;font-size:16px;color:var(--app-secondary-color);}.meta-header{@apply (--paper-font-body1);margin:0;color:var(--app-secondary-color);}.meta-text{@apply (--paper-font-caption);margin:0;color:var(--app-secondary-color);}.description{margin:0 0 32px 0;}.description> h4{margin:0 0 12px 0;}.description> p{margin:0;color:var(--app-secondary-color);}.pickers{@apply (--layout-vertical);border-top:1px solid #ccc;}shop-select> select{font-size:16px;padding:16px 24px 16px 70px;}@media (max-width: 640px){#content{@apply (--layout-vertical);@apply (--layout-center);}.user-image-container{margin:0;width:100%;}.user-image-container{z-index:1;}#content{}.detail{box-sizing:border-box;}.detail .meta-container{@apply (--layout-horizontal);position:relative;}.detail .meta-imageFFF{height:108px;width:108px;position:absolute;top:0;right:0;}h1{font-size:20px;line-height:24px;}}</style>
+
+        
+        <app-route route="[[route]]" pattern="/:link" data="{{routeDataDetail}}"></app-route>
+
+        
+        
+
+
+        <div id="content" hidden$="[[failure]]">
+            
+
+            <div class="user-image-container">
+                <dlx-block src="{{user.photoURL}}" textfff="{{user.displayName}}"></dlx-block>
+            </div>
+
+
+            <div class="detail" has-content$="[[_isDefined(user)]]">
+
+                <div class="meta-container">
+                    <div class="meta-data">
+                        <h1>[[user.displayName]]</h1>
+                        <div class="meta-header" hidden="[[!user]]">[[user.email]]</div>
+                        <div class="meta-text">[[user.photoURL]]</div>
+                    </div>
+                    
+                </div>
+
+
+                <div class="pickers">
+                    <h1>pickers</h1>
+                </div>
+
+
+                <div class="description" hidden$="[[!user.description]]">
+                    <h4>Description</h4>
+                    <p id="desc">{{user.description}}</p>
+                </div>
+
+
+
+                
+            </div>
+        </div>
+
+        
+        <shop-network-warning hidden$="[[!failure]]" offline="[[offline]]" on-try-reconnect="_tryReconnect"></shop-network-warning>
+
+    </template>
+
+    <script>Polymer({is:"page-user",properties:{user:Object,route:Object,routeDataDetail:Object,visible:Boolean,offline:{type:Boolean,observer:"_offlineChanged"},youtubeId:{type:String,notify:!0},link:{type:String,notify:!0},failure:{type:Boolean,notify:!0,value:!1}},observers:["_link(visible, routeDataDetail)"],_link:function(e,t){console.log(t),t.link&&(this.set("link",t.link),e&&this.user&&this.debounce("item-change",function(){var e=this.user.description||"";this.$.desc.innerHTML=this._unescapeText(e),this.fire("change-section",{title:user.title})}))},_youtube:function(e,t,i){"/video"===t.prefix&&i&&this.user&&this.debounce("item-change",function(){var e=this.user?this.user.description:"";this.$.desc.innerHTML=this._unescapeText(e),this.fire("change-section",{title:user.name})})},_unescapeText:function(e){var t=document.createElement("textarea");return t.innerHTML=e,t.textContent},_formatPrice:function(e){return e?"$"+e.toFixed(2):""},_isDefined:function(e){return null!=e},_tryReconnect:function(){console.log(offline)},_offlineChanged:function(e){console.log(e),e?this.failure=!0:this.failure=!1}});</script>
+
+</dom-module>
+</body></html>

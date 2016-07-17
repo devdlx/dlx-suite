@@ -1,0 +1,7 @@
+{
+  "name": "dlx-suite",
+  "short_name": "dlx-suite",
+  "description": "suite of components",
+  "start_url": "/",
+  "display": "standalone"
+}

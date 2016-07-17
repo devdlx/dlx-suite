@@ -1,0 +1,99 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="splash-up">
+
+    <template>
+
+        <style is="custom-style" includes="">
+            :host {
+
+              display: block;
+              min-height: 101vh;
+              line-height: 68px;
+              text-align: center;
+              font-size: 16px;
+              font-weight: 600;
+              letter-spacing: 0.3em;
+              color: #202020;
+              /* padding: 0 16px; */
+              overflow: visible;
+              position: absolute;
+              left: 0;
+              right: 0;
+              top: 0;
+              /*top: calc(50% - 68px);*/
+              bottom: 0;
+              background-color: red;
+              z-index: 9999;
+
+            }
+
+
+
+
+        </style>
+
+        <content select='[splash]' class="animated splash"></content>
+      <content select='[main]' class="animated"></content>
+
+    </template>
+
+<script type="text/javascript">
+
+(function() {
+
+    // #splash-up
+    let MyBehavior = {};
+
+    class splashUp {
+
+        // Define behaviors with a getter.
+        // get behaviors() {
+        //     return [MyBehavior];
+        // }
+
+        // Element setup goes in beforeRegister instead of createdCallback.
+        beforeRegister() {
+            this.is = 'splash-up';
+            // Define the properties object in beforeRegister.
+            this.properties = {
+
+            };
+
+            this.listeners = {
+
+            };
+
+            this.observers = [
+
+            ];
+        }
+
+        // #ready
+        ready() {
+            // console.log('player ready');
+
+        }
+
+        attached() {}
+        detached() {}
+        attributeChanged() {}
+
+
+        ready() {
+
+
+
+
+        }
+    }
+
+    // Register the element using Polymer's constructor.
+    Polymer(splashUp);
+})();
+
+
+</script>
+
+
+</dom-module>

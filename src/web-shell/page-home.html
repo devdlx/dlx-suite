@@ -1,0 +1,183 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+
+<!-- <link rel="import" href="dlx-button.html"> -->
+<link rel="import" href="../dlx-block/dlx-block.html">
+<link rel="import" href="../dlx-firebase/dlx-firebase.html">
+
+
+<dom-module id="page-home">
+
+    <template>
+
+        <style include="dlx-button">
+            :host {
+                display: block;
+            }
+
+            .image-link {
+                outline: none;
+            }
+
+            .image-link> dlx-block::after {
+                display: block;
+                content: '';
+                position: absolute;
+                transition-property: opacity;
+                transition-duration: 0s;
+                transition-delay: 90ms;
+                pointer-events: none;
+                opacity: 0;
+                top: 5px;
+                left: 5px;
+                right: 5px;
+                bottom: 5px;
+                outline: #2196F3 auto 5px;
+                outline: -moz-mac-focusring auto 5px;
+                outline: -webkit-focus-ring-color auto 5px;
+            }
+
+            .image-link:focus> dlx-block::after {
+                opacity: 1;
+            }
+
+            .item {
+                display: block;
+                text-decoration: none;
+                text-align: center;
+                margin-bottom: 40px;
+            }
+
+            .item:nth-of-type(3),
+            .item:nth-of-type(4) {
+                display: inline-block;
+                width: 50%;
+            }
+
+            dlx-block {
+                position: relative;
+                height: 320px;
+                overflow: hidden;
+                --dlx-block-img: {
+                    position: absolute;
+                    top: 0;
+                    bottom: 0;
+                    left: -9999px;
+                    right: -9999px;
+                    max-width: none;
+                }
+                ;
+            }
+
+            h2 {
+                font-size: 1.3em;
+                font-weight: 500;
+                margin: 32px 0;
+            }
+
+            .item:nth-of-type(3)> h2,
+            .item:nth-of-type(4)> h2 {
+                font-size: 1.1em;
+            }
+
+            @media (max-width: 767px) {
+                dlx-block {
+                    height: 240px;
+                }
+                h2 {
+                    margin: 24px 0;
+                }
+                .item:nth-of-type(3)> dlx-button> a,
+                .item:nth-of-type(4)> dlx-button> a {
+                    padding: 8px 24px;
+                }
+            }
+        </style>
+
+
+        <dlx-firebase query="/pages/byId" items="{{items}}"></dlx-firebase>
+
+        <div class="layout vertical">
+            <template is="dom-repeat" items="[[items]]" strip-whitespace>
+                <div class="item">
+                    <a class="image-link" href$="/list/[[item.name]]">
+                        <dlx-block src="[[item.image]]" alt="[[item.title]]" placeholder-img="[[item.placeholder]]" text="Some text here"></dlx-block>
+                    </a>
+                    <h2>[[item.title]]</h2>
+                    <dlx-button>
+                        <a aria-label$="[[item.title]] Shop Now" href$="/list/[[item.name]]">Shop Now</a>
+                    </dlx-button>
+                </div>
+            </template>
+
+            <a class="image-link" href="/video/7d60f16e44474ca87c2c5202fba1e8589e2d6367">
+                <dlx-block style="background-color:#e57373;" alt="[[item.title]]" placeholder-img="" text="Knock Knock (2015)"></dlx-block>
+            </a>
+
+            <a class="image-link" href="/video/fe883f89b5b53ef1b49c89fe1cc5a31bd534cdda">
+                <dlx-block style="background-color:#ba68c8;"   alt="[[item.title]]" placeholder-img="" text="Coherence"></dlx-block>
+            </a>
+
+            <a class="image-link" href="/video/202effd79e2ec2b40b872c1b401d9dd47cbef5f0">
+                <dlx-block style="background-color:#7986cb;"  alt="[[item.title]]" placeholder-img="" text="007 Quantum of Solace"></dlx-block>
+            </a>
+
+            <a class="image-link" href="/video/e04c85c1fdffddbc07e2fdab717a089227c6a6b0">
+                <dlx-block style="background-color:#81c784;"  alt="[[item.title]]" placeholder-img="" text="Milly Rock"></dlx-block>
+            </a>
+
+            <a class="image-link" href="/video/9e4be6b820a00d191e416b7078379d0a5f6984d7">
+                <dlx-block style="background-color:#ffb74d;"  alt="[[item.title]]" placeholder-img="" text="Grounded Vendaloop"></dlx-block>
+            </a>
+
+            <a class="image-link" href="/video/6ea604db1e02ad02747f505b6123e17234181951">
+                <dlx-block style="background-color:#78909c;"  alt="[[item.title]]" placeholder-img="" text="lucifer.106.hdtv-lol"></dlx-block>
+            </a>
+
+        </div>
+        <app-location route="{{route}}"></app-location>
+    </template>
+
+    <script>
+        Polymer({
+
+            is: 'page-home',
+
+            properties: {
+
+                items: {
+                    type: Array,
+                },
+
+                visible: {
+                    type: Boolean,
+                    observer: '_visibleChanged'
+                },
+                ref: {
+                    type: Object
+                }
+
+            },
+
+            observers: [
+                '_changed(items)',
+
+            ],
+
+            _changed: function(items) {
+                // console.log(items);
+            },
+
+
+            _visibleChanged: function(visible) {
+                if (visible) {
+                    this.fire('change-section', {
+                        title: 'Home'
+                    });
+                }
+            }
+
+        });
+    </script>
+
+</dom-module>

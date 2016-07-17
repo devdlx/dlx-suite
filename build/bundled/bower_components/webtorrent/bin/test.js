@@ -1,0 +1,2 @@
+#!/usr/bin/env node
+function npmRun(n,s){spawn("npm",["run",n],{stdio:"inherit"}).on("close",function(n){0===n&&s?s(n):process.exit(n)})}var spawn=require("cross-spawn"),runSauceLabs=!process.env.CI||process.env.SAUCE_USERNAME&&process.env.SAUCE_ACCESS_KEY;npmRun("test-node",function(){npmRun("test-browser-headless",function(){runSauceLabs&&npmRun("test-browser")})});

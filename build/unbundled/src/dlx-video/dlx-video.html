@@ -1,0 +1,57 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-ripple/paper-ripple.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/av-icons.html">
+<link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower_components/paper-styles/color.html">
+
+<script src="../webtorrent/webtorrent.min.js" charset="utf-8"></script>
+</head><body><dom-module id="dlx-video">
+	<style is="custom-style">:host{--dlx-video-controls-background:linear-gradient(0deg, rgba(0, 0, 0, 0.9) 0, rgba(0, 0, 0, 0.15) 58%, transparent);--dlx-video-controls-color:#e0e0e0;--dlx-video-slider-color:#e0e0e0;background:black;display:block;width:100%;height:100%;}:host paper-ripple{color:--dlx-video-controls-color;}:host paper-slider{--paper-slider-active-color:var(--dlx-video-slider-color);--paper-slider-knob-color:var(--dlx-video-slider-color);}:host .container{position:relative;height:100%;width:100%;}:host #videoControls{display:flex;color:var(--dlx-video-controls-color);background:var(--dlx-video-controls-background);padding:0 4px;align-items:center;position:absolute;bottom:0;right:0;left:0;}paper-progress{display:block;width:100%;position:absolute;bottom:0;left:0;right:0;}paper-progress{--paper-progress-active-color:rgba(139, 195, 74, 0.88);--paper-progress-secondary-color:var(--paper-light-green-100);opacity:0;transition:opacity .35s ease-in-out;-moz-transition:opacity .35s ease-in-out;-webkit-transition:opacity .35s ease-in-out;}paper-progress[loading]{opacity:1;}#videoControls> *{margin-right:8px;}:host paper-ripple{color:white;}:host #durationSlider{flex:1;--paper-slider-secondary-color:rgba(139, 195, 74, 0.88);}:host #volumeSlider{max-width:120px;}#toggleVolume{display:none;}:host .video-time{font-family:'Roboto';font-size:12px;}:host #container:-webkit-full-screen,
+		:host #container:-webkit-full-screen video{width:100vw;height:100vh;}#videoContainer{position:relative;width:100%;height:100%;display:-webkit-box;}#videoPlayerCanvas{display:-webkit-box;top:0;left:0;bottom:0;right:0;position:absolute;width:100%;height:100%;}:host video{background-color:black;width:100%;height:100%;display:-webkit-box;}@media (max-width: 767px){:host #toggleMuteButton{display:none;}:host #volumeSlider{display:none;}}</style>
+	<template>
+
+
+		<div id="container" class="container layout">
+
+			<div class="videoContainer" id="videoContainer" hidden$="[[!raw]]">
+				
+				<video on-mouseenter="onMouseEntered" on-mouseleave="onMouseLeave" on-tap="togglePlayPause" width$="{{width}}" muted$="{{muted}}" poster$="{{poster}}" preload$="{{preload}}" height$="{{height}}" id="videoPlayer" src$="{{src}}" autoplay$="{{autoplay}}" loop$="{{loop}}" on-play="OnVideoPlay"></video>
+				
+				
+			</div>
+			<template is="dom-if" if="{{youtubeId}}">
+				<google-youtube currenttime="{{currentTime}}" currenttimeformatted="{{currentTick}}" durationformatted="{{durationTick}}" id="yt" fluid="" video-id="{{youtubeId}}" rel="0" start="1" autoplay="1" chromeless="" on-google-youtube-state-change="_youtubeState"></google-youtube>
+			</template>
+
+			
+			<paper-material elevation="1" hidden$="{{!controls}}" id="videoControls">
+
+				<paper-icon-button id="playPauseButton" on-click="togglePlayPause" icon="{{playPauseIcon}}"></paper-icon-button>
+
+				<span class="video-time">{{currentTick}}/{{durationTick}}</span>
+
+				<paper-slider id="durationSlider" value="[[videoTimeline]]" on-change="setTimelineFrame" secondary-progress="[[progress]]"></paper-slider>
+
+				<paper-icon-button id="toggleMuteButton" icon="[[volumeIcon]]" on-click="toggleMute" hidden$="[[narrow]]"></paper-icon-button>
+
+				<paper-slider id="volumeSlider" value="{{videoVolume}}" on-change="_changeVolume" hidden$="[[narrow]]"></paper-slider>
+
+				<paper-icon-button id="toggleVolume" icon="icons:fullscreen" on-click="toggleVolume"></paper-icon-button>
+
+				<paper-icon-button id="toggleFullScreenButton" icon="icons:fullscreen" on-click="toggleFullScreen"></paper-icon-button>
+
+			</paper-material>
+
+			<paper-progress indeterminate$="{{loading}}" loading$="{{loading}}" value="800" min="100" max="1000"></paper-progress>
+
+			
+		</div>
+	</template>
+
+	<script src="./dlx-video.js" charset="utf-8"></script>
+</dom-module>
+</body></html>

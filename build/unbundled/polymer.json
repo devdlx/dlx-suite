@@ -1,0 +1,9 @@
+{
+  "entrypoint": "index.html",
+  "shell": "src/web-shell/web-shell.html",
+  "fragments":[
+    "src/web-shell/page-video.html",
+    "src/dlx-video/dlx-video.html"
+
+  ]
+}

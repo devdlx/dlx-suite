@@ -1,0 +1,42 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../ripple-container.html">
+
+<dom-module id="dlx-tab">
+  <template strip-whitespace>
+    <style>
+      [hidden] {
+        display: none !important;
+      }
+
+      :host {
+        display: inline-block;
+        position: relative;
+      }
+
+      #overlay {
+        pointer-events: none;
+        display: none;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        @apply(--dlx-tab-overlay);
+      }
+
+      :host(.dlx-tabs-overlay-static-above) #overlay {
+        display: block;
+      }
+    </style>
+    <div id="overlay"></div>
+    <ripple-container>
+      <content></content>
+    </ripple-container>
+  </template>
+  <script>
+    Polymer({
+      is: 'dlx-tab'
+    });
+  </script>
+</dom-module>

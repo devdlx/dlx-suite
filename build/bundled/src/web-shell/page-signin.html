@@ -1,0 +1,486 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/paper-styles/paper-styles-classes.html">
+
+<link href="../dlx-styles/dlx-styles.html" rel="import">
+
+<link href="../dlx-firebase/dlx-firebase.html" rel="import">
+<link href="../dlx-block/dlx-block.html" rel="import">
+<link href="../dlx-input/dlx-input.html" rel="import">
+<link href="../dlx-button/dlx-button.html" rel="import">
+<link href="../dlx-tabs/dlx-tabs.html" rel="import">
+<link href="../dlx-tabs/dlx-tab.html" rel="import">
+
+
+
+
+</head><body><dom-module id="page-signin">
+
+    <template>
+
+        <style include="dlx-common-styles dlx-input dlx-button">:host{display:block;--dlx-video-height:calc(100vw / 1.78);}#content{@apply (--layout-horizontal);@apply (--layout-center-justified);transition:opacity 0.5s;}:host([waiting]) #content{opacity:0.1;}.page-signin{}.login-image-container{position:relative;margin:0 0 0 24px;width:60%;}dlx-block::before{content:"";display:block;padding-top:100%;}.detail{padding:24px;margin:0 42px;width:50%;max-width:404px;}.detail .meta-container{@apply (--layout-vertical);position:relative;margin-bottom:24px;}.detail .meta-data{width:calc(100% - 116px);}.detail .meta-image{height:108px;width:108px;position:absolute;top:0;right:0;}.meta-title{@apply (--paper-font-subhead);font-size:24px;font-weight:500;line-height:28px;margin:0;}.price{margin:16px 0 40px;font-size:16px;color:var(--app-secondary-color);}.meta-header{@apply (--paper-font-body1);margin:0;color:var(--app-secondary-color);}.meta-text{@apply (--paper-font-caption);margin:0;color:var(--app-secondary-color);}.description{margin:0 0 32px 0;}.description> h4{margin:0 0 12px 0;}.description> p{margin:0;color:var(--app-secondary-color);}.signin-form-container{@apply (--layout-vertical);margin-top:16px;}dlx-select> select{font-size:16px;padding:16px 24px 16px 70px;}@media (max-width: 640px){#content{@apply (--layout-vertical);@apply (--layout-center);}.login-image-container{margin:0;width:100%;}.login-image-container{}.page-user-player{height:var(--dlx-video-height);}#content{}.detail{box-sizing:border-box;width:100%;max-width:600px;}.detail .meta-container{@apply (--layout-horizontal);position:relative;}.detail .meta-image{height:108px;width:108px;position:absolute;top:0;right:0;}h1{font-size:20px;line-height:24px;}}iron-pages{padding-top:24px;}</style>
+
+        
+        <app-route route="[[route]]" pattern="/:link" data="{{routeDataDetail}}"></app-route>
+
+        <dlx-firebase id="auth" user="{{user}}" signed-in="{{signedIn}}"></dlx-firebase>
+
+        <paper-spinner-lite active="[[waiting]]"></paper-spinner-lite>
+
+
+        <div id="content" hiddenfff$="[[signedIn]]">
+
+            <div class="detail">
+
+                <div class="meta-container" hidden="">
+                    <div class="meta-data">
+                        <h1>[[user.title]]</h1>
+                        <div class="meta-header" hidden="[[!user.meta.header]]">user.meta.header</div>
+                        <div class="meta-text">user.meta.text</div>
+                    </div>
+                    <div class="meta-image">
+                        <dlx-block alt="[[user.meta]] [[user.title]]" src="[[user.poster_path]]" text="open"></dlx-block>
+                    </div>
+                </div>
+
+
+                <div id="tabContainer">
+                    <dlx-tabs selected="{{page}}" attr-for-selected="name">
+                        <dlx-tab name="provider">
+                            <a href="">Provider</a>
+                        </dlx-tab>
+                        <dlx-tab name="signin">
+                            <a href="">Sign In</a>
+                        </dlx-tab>
+                        <dlx-tab name="create">
+                            <a href="">Create</a>
+                        </dlx-tab>
+                    </dlx-tabs>
+                </div>
+
+
+                <iron-pages role="main" selected="{{page}}" attr-for-selected="name" selected-attribute="visible">
+
+
+                    <div name="provider">
+                        <div id="firebaseuiAuthContainer">
+
+                            <div class="firebaseui-container firebaseui-page-provider-sign-in firebaseui-id-page-provider-sign-in">
+                                <div class="firebaseui-card-content">
+                                    <form onsubmit="return false">
+                                        <ul class="firebaseui-idp-list">
+                                            <li class="firebaseui-list-item">
+                                                <a href="" on-click="_authGoogle" class="firebaseui-idp-button mdl-button mdl-js-button mdl-button--raised firebaseui-idp-google firebaseui-id-idp-button" data-provider-id="google.com" data-upgraded=",MaterialButton"><img class="firebaseui-idp-icon" src="https://www.gstatic.com/firebasejs/staging/3.0.0/auth/images/google.svg"><span class="firebaseui-idp-text firebaseui-idp-text-long">Sign in with Google</span><span class="firebaseui-idp-text firebaseui-idp-text-short">Google</span></a>
+                                            </li>
+                                            <li class="firebaseui-list-item">
+                                                <a href="" on-click="_authFacebook" class="firebaseui-idp-button mdl-button mdl-js-button mdl-button--raised firebaseui-idp-facebook firebaseui-id-idp-button" data-provider-id="facebook.com" data-upgraded=",MaterialButton"><img class="firebaseui-idp-icon" src="https://www.gstatic.com/firebasejs/staging/3.0.0/auth/images/facebook.svg"><span class="firebaseui-idp-text firebaseui-idp-text-long">Sign in with Facebook</span>
+                                                    <span class="firebaseui-idp-text firebaseui-idp-text-short">Facebook</span>
+                                                </a>
+                                            </li>
+                                            <li class="firebaseui-list-item">
+                                                <a href="" on-click="_authTwitter" class="firebaseui-idp-button mdl-button mdl-js-button mdl-button--raised firebaseui-idp-twitter firebaseui-id-idp-button" data-provider-id="twitter.com" data-upgraded=",MaterialButton"><img class="firebaseui-idp-icon" src="https://www.gstatic.com/firebasejs/staging/3.0.0/auth/images/twitter.svg"><span class="firebaseui-idp-text firebaseui-idp-text-long">Sign in with Twitter</span>
+                                                    <span class="firebaseui-idp-text firebaseui-idp-text-short">Twitter</span>
+                                                </a>
+                                            </li>
+                                            <li class="firebaseui-list-item">
+                                                <a href="" on-click="_authEmail" class="firebaseui-idp-button mdl-button mdl-js-button mdl-button--raised firebaseui-idp-password firebaseui-id-idp-button" data-provider-id="password" data-upgraded=",MaterialButton"><img class="firebaseui-idp-icon" src="https://www.gstatic.com/firebasejs/staging/3.0.0/auth/images/mail.svg"><span class="firebaseui-idp-text firebaseui-idp-text-long">Sign in with email</span><span class="firebaseui-idp-text firebaseui-idp-text-short">Email</span></a>
+                                            </li>
+                                        </ul>
+                                    </form>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <form id="signinForm" name="signin" is="iron-form" method="post" action="/" on-iron-form-presubmit="_willSendSignin">
+                        <div class="signin-form-container">
+                            <dlx-input>
+                                <input type="email" value="{{email}}" id="accountEmail" name="accountEmail" placeholder="Email" autofocus="" required="" aria-labelledby="accountEmailLabel accountInfoHeading">
+                                <dlx-md-decorator error-message="Invalid Email" aria-hidden="true">
+                                    <label id="accountEmailLabel">Email</label>
+                                    <dlx-underline></dlx-underline>
+                                </dlx-md-decorator>
+                            </dlx-input>
+
+                            <dlx-input>
+                                <input type="password" value="{{password}}" id="accountPassword" name="accountPassword" placeholder="Password" autofocus="" required="" aria-labelledby="accountPasswordLabel accountInfoHeading">
+                                <dlx-md-decorator error-message="Invalid Password" aria-hidden="true">
+                                    <label id="accountPasswordLabel">Password</label>
+                                    <dlx-underline></dlx-underline>
+                                </dlx-md-decorator>
+                            </dlx-input>
+
+                            <br>
+
+                            <dlx-button responsive="" id="submitSigninBox">
+                                <input type="button" on-click="_submitSignin" value="Sign in">
+                            </dlx-button>
+
+                        </div>
+                    </form>
+
+
+
+                    <form id="createForm" name="create" is="iron-form" method="post" action="/" on-iron-form-presubmit="_willSendCreate">
+                        <div class="signin-form-container">
+
+                            <dlx-input>
+                                <input type="email" value="{{email}}" id="accountEmail" name="accountEmail" placeholder="Email" autofocus="" required="" aria-labelledby="accountEmailLabel accountInfoHeading">
+                                <dlx-md-decorator error-message="Invalid Email" aria-hidden="true">
+                                    <label id="accountEmailLabel">Email</label>
+                                    <dlx-underline></dlx-underline>
+                                </dlx-md-decorator>
+                            </dlx-input>
+
+                            <dlx-input>
+                                <input type="password" value="{{password}}" id="accountPassword" name="accountPassword" placeholder="Password" autofocus="" required="" aria-labelledby="accountPasswordLabel accountInfoHeading">
+                                <dlx-md-decorator error-message="Invalid Password" aria-hidden="true">
+                                    <label id="accountPasswordLabel">Password</label>
+                                    <dlx-underline></dlx-underline>
+                                </dlx-md-decorator>
+                            </dlx-input>
+
+                            <dlx-input>
+                                <input type="password" value="{{password2}}" id="accountPassword2" name="accountPassword2" placeholder="Password" autofocus="" required="" aria-labelledby="accountPassword2Label accountInfoHeading">
+                                <dlx-md-decorator error-message="Passwords Dont Match" aria-hidden="true">
+                                    <label id="accountPassword2Label">Password Match</label>
+                                    <dlx-underline></dlx-underline>
+                                </dlx-md-decorator>
+                            </dlx-input>
+
+                            <br>
+
+                            <dlx-button responsive="" id="submitCreateBox">
+                                <input type="button" on-click="_submitCreate" value="Create">
+                            </dlx-button>
+
+                        </div>
+                    </form>
+
+                </iron-pages>
+
+                <div class="description" hidden="">
+                    <h4>Sign In</h4>
+                    <p id="desc">some text</p>
+                </div>
+
+
+                
+            </div>
+
+            
+
+        </div>
+
+        
+        <dlx-network-warning hidden$="[[!failure]]" offline="[[offline]]" on-try-reconnect="_tryReconnect"></dlx-network-warning>
+
+    </template>
+
+    <script>
+        var uiConfig = {
+            'queryParameterForSignInSuccessUrl': 'signInSuccessUrl',
+            'queryParameterForWidgetMode': 'form_mode',
+            'signInOptions': [
+                // Leave the lines as is for the providers you want to offer your users.
+                firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+                firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+                firebase.auth.TwitterAuthProvider.PROVIDER_ID,
+                // firebase.auth.GithubAuthProvider.PROVIDER_ID,
+                firebase.auth.EmailAuthProvider.PROVIDER_ID
+            ],
+            // Terms of service url.
+            'tosUrl': '<your-tos-url>',
+        };
+
+
+        Polymer({
+            is: 'page-signin',
+            properties: {
+                user: Object,
+                route: Object,
+                routeDataDetail: Object,
+                visible: Boolean,
+                offline: {
+                    type: Boolean,
+                    observer: '_offlineChanged'
+                },
+                failure: {
+                    type: Boolean,
+                    notify: true,
+                    value: false
+                },
+
+                waiting: {
+                    type: Boolean,
+                    readOnly: true,
+                    reflectToAttribute: true
+                },
+
+                email: {
+                    type: String,
+                    notify: true,
+                    value: 'cw@gmail.com'
+                },
+                password: {
+                    type: String,
+                    notify: true,
+                    value: 'false'
+                },
+
+                password2: {
+                    type: String,
+                    notify: true,
+                    value: 'false'
+                },
+
+                page: {
+                    type: String,
+                    notify: true,
+                    value: 'provider'
+                },
+            },
+
+            listeners: {
+                'dlx-firebase-auth-error': 'onError',
+                'dlx-firebase-auth-signedin': 'onSignedin'
+
+            },
+            observers: [
+                '_visibleChanged(visible, routeDataDetail)'
+            ],
+            _visibleChanged: function(visible, routeDataDetail) {
+                if (routeDataDetail) {
+                    console.dir(routeDataDetail);
+                }
+                console.log(visible, routeDataDetail);
+                if (visible) {
+
+                    // if (!this.firebaseui) {
+                    //     this.async(function() {
+                    //         this.firebaseui = new firebaseui.auth.AuthUI(firebase.auth());
+                    //         this.firebaseui.start(this.$.firebaseuiAuthContainer, uiConfig);
+                    //     }, 0);
+                    // }
+
+                    // this.debounce('item-change', function() {
+                    //     this.fire('change-section', {
+                    //         title: 'Sign In'
+                    //     });
+                    // });
+                    this.debounce('item-change', function() {
+                        this.fire('change-section', {
+                            title: 'dlxSuite'
+                        });
+                    });
+                }
+
+
+
+
+            },
+
+            _isDefined: function(item) {
+                return item != null;
+            },
+            _tryReconnect: function() {
+                //this.$.categoryData.refresh();
+                console.log(offline);
+            },
+            _offlineChanged: function(offline) {
+                console.log(offline);
+                if (!offline) {
+                    //this._tryReconnect();
+                    this.failure = false;
+                } else {
+                    this.failure = true;
+                }
+            },
+
+            _submitSignin: function(e) {
+                if (this._validateForm()) {
+
+                    let info = this.$.signinForm.serialize();
+
+                    // this.$.signinForm.fire('iron-form-presubmit', null, {
+                    //     bubbles: false
+                    // });
+
+                    // console.log(this.$.signinForm);
+
+                    this.$.auth.signIn(info.accountEmail, info.accountPassword);
+
+                    // this.debounce('_submitForm', function() {
+                    //     this.$.signinForm.fire('iron-form-response', {
+                    //         response: {
+                    //             success: 1,
+                    //             successMessage: 'Demo checkout process complete.'
+                    //         }
+                    //     }, {
+                    //         bubbles: false
+                    //     });
+                    // }, 1000);
+
+                    // this.$.signinForm.submit();
+                }
+            },
+
+            _submitCreate: function(e) {
+                if (this._validateForm()) {
+
+
+                    let info = this.$.createForm.serialize();
+
+                    // this.$.signinForm.fire('iron-form-presubmit', null, {
+                    //     bubbles: false
+                    // });
+
+                    // console.log(this.$.signinForm);
+
+
+                    this.$.auth.createUser(info.accountEmail, info.accountPassword, info.accountPassword2);
+
+                    // this.debounce('_submitForm', function() {
+                    //     this.$.signinForm.fire('iron-form-response', {
+                    //         response: {
+                    //             success: 1,
+                    //             successMessage: 'Demo checkout process complete.'
+                    //         }
+                    //     }, {
+                    //         bubbles: false
+                    //     });
+                    // }, 1000);
+
+                    // this.$.signinForm.submit();
+                }
+            },
+
+            _validateForm: function() {
+                var form = this.$.signinForm;
+                var firstInvalid = false;
+
+                for (var el, i = 0; el = form.elements[i], i < form.elements.length; i++) {
+                    if (el.checkValidity()) {
+                        el.removeAttribute('aria-invalid');
+                    } else {
+                        if (!firstInvalid) {
+                            // announce error message
+                            if (el.nextElementSibling) {
+                                this.fire('announce', el.nextElementSibling.getAttribute('error-message'));
+                            }
+                            if (el.scrollIntoViewIfNeeded) {
+                                // safari, chrome
+                                el.scrollIntoViewIfNeeded();
+                            } else {
+                                // firefox, edge, ie
+                                el.scrollIntoView(false);
+                            }
+                            el.focus();
+                            firstInvalid = true;
+                        }
+                        el.setAttribute('aria-invalid', 'true');
+                    }
+                }
+
+                return !firstInvalid;
+            },
+
+            _validateCreateForm: function() {
+                var form = this.$.createForm;
+                var firstInvalid = false;
+
+                for (var el, i = 0; el = form.elements[i], i < form.elements.length; i++) {
+                    if (el.checkValidity()) {
+                        el.removeAttribute('aria-invalid');
+                    } else {
+                        if (!firstInvalid) {
+                            // announce error message
+                            if (el.nextElementSibling) {
+                                this.fire('announce', el.nextElementSibling.getAttribute('error-message'));
+                            }
+                            if (el.scrollIntoViewIfNeeded) {
+                                // safari, chrome
+                                el.scrollIntoViewIfNeeded();
+                            } else {
+                                // firefox, edge, ie
+                                el.scrollIntoView(false);
+                            }
+                            el.focus();
+                            firstInvalid = true;
+                        }
+                        el.setAttribute('aria-invalid', 'true');
+                    }
+                }
+
+                return !firstInvalid;
+            },
+
+            _reset: function() {
+                var form = this.$.signinForm;
+                var form2 = this.$.createForm;
+
+                this._setWaiting(false);
+                form.reset();
+                form2.reset();
+
+                // Remove the `aria-invalid` attribute from the form inputs.
+                for (var el, i = 0; el = form.elements[i], i < form.elements.length; i++) {
+                    el.removeAttribute('aria-invalid');
+                }
+            },
+
+
+            _willSendSignin: function(e) {
+                e.preventDefault();
+                this._setWaiting(true);
+                console.log(this.$.signinForm.serialize());
+            },
+
+            _willSendCreate: function(e) {
+                e.preventDefault();
+                this._setWaiting(true);
+            },
+
+            onError: function(e) {
+                var detail = e.detail;
+                console.log(detail);
+                if (detail.errorCode === 'auth/user-not-found') {
+                    this.set('_createInstead', true);
+                }
+                this._setWaiting(false);
+            },
+
+            _authGoogle: function() {
+                this.$.auth.auth('google');
+
+            },
+
+            _authFacebook: function() {
+                this.$.auth.auth('facebook');
+
+            },
+
+            _authTwitter: function() {
+                this.$.auth.auth('twitter');
+
+            },
+
+            _authEmail: function() {
+                this.page = 'signin';
+
+            },
+
+
+
+
+
+        });
+    </script>
+
+</dom-module>
+</body></html>
