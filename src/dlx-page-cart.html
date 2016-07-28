@@ -1,12 +1,12 @@
 <link rel="import" href="../shop-button.html">
-<link rel="import" href="../shop-common-styles.html">
+<link rel="import" href="../dlx-styles/dlx-styles.html">
 <link rel="import" href="../shop-form-styles.html">
 <link rel="import" href="./dlx-styles.html">
 
 
 <dom-module id="dlx-page-cart">
     <template>
-        <style include="dlx-styles shop-common-styles shop-button shop-form-styles">
+        <style include="dlx-common-styles shop-button shop-form-styles">
 
       .list {
         margin: 40px 0;
@@ -58,7 +58,7 @@
 
 
 
-        
+
     </template>
 
 <script>
@@ -118,7 +118,7 @@
           this.fire('change-section', { title: 'Your cart' });
         }
       }
-      
+
         // #ready
         ready() {
                 console.log('dlx-page-cart ready');

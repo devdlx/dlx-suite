@@ -1,25 +1,37 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 
 <!-- <link rel="import" href="dlx-button.html"> -->
 <link rel="import" href="../dlx-block/dlx-block.html">
+<link rel="import" href="../dlx-input/dlx-input.html">
 <link rel="import" href="../dlx-firebase/dlx-firebase.html">
-
+<!-- <link rel="import" href="../dlx-soundcloud/dlx-soundcloud.html"> -->
+<script src="https://connect.soundcloud.com/sdk/sdk-3.1.2.js"></script>
 
 <dom-module id="page-home">
 
     <template>
 
-        <style include="dlx-button">
+        <style include="dlx-button dlx-input">
             :host {
                 display: block;
+                min-height: calc(100vh+ 64px);
             }
 
-            .image-link {
+            h1,
+            h2 {
+                margin: 0;
+            }
+
+            .item-link {
                 outline: none;
+                margin-bottom: 16px;
+                padding: 0 16px 0 16px
             }
 
-            .image-link> dlx-block::after {
+            .item-link> dlx-block::after {
                 display: block;
                 content: '';
                 position: absolute;
@@ -28,117 +40,275 @@
                 transition-delay: 90ms;
                 pointer-events: none;
                 opacity: 0;
-                top: 5px;
-                left: 5px;
-                right: 5px;
-                bottom: 5px;
+                top: 0px;
+                left: 0px;
+                right: 0px;
+                bottom: 0px;
                 outline: #2196F3 auto 5px;
                 outline: -moz-mac-focusring auto 5px;
                 outline: -webkit-focus-ring-color auto 5px;
             }
 
-            .image-link:focus> dlx-block::after {
+            .item-link:focus> dlx-block::after {
                 opacity: 1;
             }
 
-            .item {
-                display: block;
-                text-decoration: none;
-                text-align: center;
-                margin-bottom: 40px;
-            }
-
-            .item:nth-of-type(3),
-            .item:nth-of-type(4) {
-                display: inline-block;
-                width: 50%;
-            }
-
             dlx-block {
-                position: relative;
-                height: 320px;
-                overflow: hidden;
-                --dlx-block-img: {
-                    position: absolute;
-                    top: 0;
-                    bottom: 0;
-                    left: -9999px;
-                    right: -9999px;
-                    max-width: none;
+                --dlx-block-text: {
+                    color: white;
+                    background: rgba(0, 0, 0, 0.33);
                 }
                 ;
             }
 
-            h2 {
-                font-size: 1.3em;
+            paper-fab.fab-add {
+                position: fixed;
+                bottom: 16px;
+                right: 16px;
+                --paper-fab-background: var(--app-accent-color);
+                --paper-fab-keyboard-focus-background: var(--paper-light-blue-900);
+            }
+
+            paper-fab.fab-add {
+                font-size: 28px;
+                line-height: 24px;
+            }
+
+            dlx-input,
+            dlx-select {
+                font-size: 16px;
+            }
+
+            dlx-select {
+                margin-bottom: 20px;
+            }
+
+            .grid {
+                margin-top: 40px;
+                @apply(--layout-horizontal);
+            }
+
+            .grid> section {
+                @apply(--layout-flex);
+            }
+
+            .grid> section:not(:first-child) {
+                margin-left: 80px;
+            }
+
+            .row {
+                @apply(--layout-horizontal);
+                @apply(--layout-end);
+            }
+
+            .column {
+                @apply(--layout-vertical);
+            }
+
+            .row> .flex,
+            .input-row> * {
+                @apply(--layout-flex);
+            }
+
+            .input-row> *:not(:first-child) {
+                margin-left: 8px;
+            }
+
+            .dlx-select-label {
+                line-height: 20px;
+            }
+
+            .order-summary-row {
+                line-height: 24px;
+            }
+
+            .total-row {
                 font-weight: 500;
-                margin: 32px 0;
+                margin: 30px 0;
             }
 
-            .item:nth-of-type(3)> h2,
-            .item:nth-of-type(4)> h2 {
-                font-size: 1.1em;
+            iron-pages {
+                padding: 36px;
             }
 
-            @media (max-width: 767px) {
-                dlx-block {
-                    height: 240px;
+            header,
+            .grid> section {
+                margin-bottom: 32px;
+            }
+
+            #importButton {
+                margin: 20px 0;
+                margin-left: 24px;
+            }
+
+            @media (min-width: 639px) {
+                iron-pages {
+                    padding: 24px;
                 }
-                h2 {
-                    margin: 24px 0;
+            }
+
+            @media (max-width: 1023px) {
+                .grid {
+                    display: block;
+                    margin-top: 0;
                 }
-                .item:nth-of-type(3)> dlx-button> a,
-                .item:nth-of-type(4)> dlx-button> a {
-                    padding: 8px 24px;
+                .grid> section:not(:first-child) {
+                    margin-left: 0;
                 }
             }
         </style>
 
 
-        <dlx-firebase query="/pages/byId" items="{{items}}"></dlx-firebase>
+        <app-route route="[[route]]" data="{{routeDataDetail}}"></app-route>
 
-        <div class="layout vertical">
-            <template is="dom-repeat" items="[[items]]" strip-whitespace>
-                <div class="item">
-                    <a class="image-link" href$="/list/[[item.name]]">
-                        <dlx-block src="[[item.image]]" alt="[[item.title]]" placeholder-img="[[item.placeholder]]" text="Some text here"></dlx-block>
+        <dlx-firebase query="/items/byId" items="{{items}}"></dlx-firebase>
+
+        <!-- <dlx-soundcloud id="dlxsoundcloud"></dlx-soundcloud> -->
+        <!-- <iron-ajax auto url="https://api.soundcloud.com/tracks?client_id=" params='{"part":"snippet", "q":"polymer", "key": "AIzaSyAuecFZ9xJXbGDkQYWBmYrtzOGJD-iDIgI", "type": "video"}' handle-as="json" last-response="{{ajaxResponse}}"></iron-ajax> -->
+
+
+        <a href="/?page=add" class="link-add" hidden$="[[_computeFabShow(page)]]">
+            <paper-fab title="Add Item" class="fab-add" iconFFF="add" label="+"></paper-fab>
+        </a>
+
+
+        <iron-pages id="pages" role="main" selected="[[page]]" attr-for-selected="page" selected-attribute="visible">
+
+            <div class="layout vertical" page="home" class="section">
+                <template is="dom-repeat" items="[[items]]" strip-whitespace>
+                    <a class="item-link" href="{{item.link}}">
+                        <dlx-block alt="[[item.title]]" placeholder-img="" image="{{item.image}}">
+                            <h1 bottom>{{item.title}}</h1>
+                        </dlx-block>
                     </a>
-                    <h2>[[item.title]]</h2>
-                    <dlx-button>
-                        <a aria-label$="[[item.title]] Shop Now" href$="/list/[[item.name]]">Shop Now</a>
+                </template>
+            </div>
+
+            <div page="add" class="section">
+                <form id="newItemForm" is="iron-form" method="post" action="/" on-iron-form-presubmit="_willSendRequest">
+
+
+                    <header>
+                        <h1>Add to Home Screen</h1>
+                        <span>Save a new item to the home screen</span>
+                    </header>
+
+                    <div class="grid">
+                        <section>
+                            <h2 id="accountInfoHeading">Import From Link</h2>
+                            <div class="row input-row">
+                                <div class="layout horizontal">
+                                    <dlx-input class="flex-1">
+                                        <input type="text" id="itemLink" name="itemLink" placeholder="Link" autofocus aria-labelledby="itemLinkLabel accountInfoHeading" value="{{link::input}}">
+                                        <dlx-md-decorator error-message="Invalid Link" aria-hidden="true">
+                                            <label id="itemLinkLabel">Link</label>
+                                            <dlx-underline></dlx-underline>
+                                        </dlx-md-decorator>
+                                    </dlx-input>
+                                    <dlx-button id="importButton">
+                                        <input type="button" on-click="_import" value="Import" disabled$="[[importNotReady]]">
+                                    </dlx-button>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section>
+                            <h2>Info</h2>
+                            <div class="row input-row">
+                                <dlx-input>
+                                    <input type="text" id="itemTitle" name="itemTitle" placeholder="Title" required autocomplete="item-title" value="{{save.title::input}}">
+                                    <dlx-md-decorator error-message="Invalid Title" aria-hidden="true">
+                                        <label for="itemTitle">Title</label>
+                                        <dlx-underline></dlx-underline>
+                                    </dlx-md-decorator>
+                                </dlx-input>
+
+                            </div>
+
+                            <div class="row input-row">
+                                <div class="column">
+                                    <dlx-input>
+                                        <textarea rows="4" id="itemDescription" name="itemDescription" placeholder="Description" autocomplete="item-description" value="{{save.description::input}}"></textarea>
+                                        <dlx-md-decorator error-message="Invalid Description" aria-hidden="true">
+                                            <!-- <label for="itemDescription">Description</label> -->
+                                            <dlx-underline></dlx-underline>
+                                        </dlx-md-decorator>
+                                    </dlx-input>
+                                </div>
+                            </div>
+
+                            <!-- <div class="row input-row">
+                                <div class="column">
+                                    <label for="ccExpMonth">Expiry</label>
+                                    <dlx-select>
+                                        <select id="ccExpMonth" name="ccExpMonth" required autocomplete="cc-exp-month" aria-label="Expiry month">
+                                            <option value="01" selected>Jan</option>
+                                            <option value="02">Feb</option>
+                                            <option value="03">Mar</option>
+                                            <option value="04">Apr</option>
+                                            <option value="05">May</option>
+                                            <option value="06">Jun</option>
+                                            <option value="07">Jul</option>
+                                            <option value="08">Aug</option>
+                                            <option value="09">Sep</option>
+                                            <option value="10">Oct</option>
+                                            <option value="11">Nov</option>
+                                            <option value="12">Dec</option>
+                                        </select>
+                                        <dlx-md-decorator aria-hidden="true">
+                                            <dlx-underline></dlx-underline>
+                                        </dlx-md-decorator>
+                                    </dlx-select>
+                                </div>
+                                <dlx-select>
+                                    <select id="ccExpYear" name="ccExpYear" required autocomplete="cc-exp-year" aria-label="Expiry year">
+                                        <option value="2016" selected>2016</option>
+                                        <option value="2017">2017</option>
+                                        <option value="2018">2018</option>
+                                        <option value="2019">2019</option>
+                                        <option value="2020">2020</option>
+                                        <option value="2021">2021</option>
+                                        <option value="2022">2022</option>
+                                        <option value="2023">2023</option>
+                                        <option value="2024">2024</option>
+                                        <option value="2025">2025</option>
+                                        <option value="2026">2026</option>
+                                    </select>
+                                    <dlx-md-decorator aria-hidden="true">
+                                        <dlx-underline></dlx-underline>
+                                    </dlx-md-decorator>
+                                </dlx-select>
+                                <dlx-input>
+                                    <input type="tel" id="ccCVV" name="ccCVV" pattern="\d{3,4}" placeholder="CVV" required autocomplete="cc-csc">
+                                    <dlx-md-decorator error-message="Invalid CVV" aria-hidden="true">
+                                        <label for="ccCVV">CVV</label>
+                                        <dlx-underline></dlx-underline>
+                                    </dlx-md-decorator>
+                                </dlx-input>
+                            </div> -->
+                            <!-- <h2>Order Summary</h2> -->
+                        </section>
+                    </div>
+
+                    <dlx-button responsive id="savbtn" hidden$="[[_computeSaveShow(changes)]]">
+                        <input type="button" on-click="_save" value="Save">
                     </dlx-button>
-                </div>
-            </template>
+                </form>
+            </div>
 
-            <a class="image-link" href="/video/7d60f16e44474ca87c2c5202fba1e8589e2d6367">
-                <dlx-block style="background-color:#e57373;" alt="[[item.title]]" placeholder-img="" text="Knock Knock (2015)"></dlx-block>
-            </a>
 
-            <a class="image-link" href="/video/fe883f89b5b53ef1b49c89fe1cc5a31bd534cdda">
-                <dlx-block style="background-color:#ba68c8;"   alt="[[item.title]]" placeholder-img="" text="Coherence"></dlx-block>
-            </a>
+        </iron-pages>
 
-            <a class="image-link" href="/video/202effd79e2ec2b40b872c1b401d9dd47cbef5f0">
-                <dlx-block style="background-color:#7986cb;"  alt="[[item.title]]" placeholder-img="" text="007 Quantum of Solace"></dlx-block>
-            </a>
 
-            <a class="image-link" href="/video/e04c85c1fdffddbc07e2fdab717a089227c6a6b0">
-                <dlx-block style="background-color:#81c784;"  alt="[[item.title]]" placeholder-img="" text="Milly Rock"></dlx-block>
-            </a>
-
-            <a class="image-link" href="/video/9e4be6b820a00d191e416b7078379d0a5f6984d7">
-                <dlx-block style="background-color:#ffb74d;"  alt="[[item.title]]" placeholder-img="" text="Grounded Vendaloop"></dlx-block>
-            </a>
-
-            <a class="image-link" href="/video/6ea604db1e02ad02747f505b6123e17234181951">
-                <dlx-block style="background-color:#78909c;"  alt="[[item.title]]" placeholder-img="" text="lucifer.106.hdtv-lol"></dlx-block>
-            </a>
-
-        </div>
-        <app-location route="{{route}}"></app-location>
     </template>
 
     <script>
+        var client_id = 'b99a389bf08ad6d8260a1bbb8cf2162b';
+        SC.initialize({
+            client_id: client_id,
+            redirect_uri: 'http://localhost:8080/signin?auth=soundcloud'
+        });
+
         Polymer({
 
             is: 'page-home',
@@ -149,23 +319,132 @@
                     type: Array,
                 },
 
+
                 visible: {
                     type: Boolean,
                     observer: '_visibleChanged'
                 },
-                ref: {
-                    type: Object
-                }
+                page: {
+                    type: String,
+                    value: "home"
+                },
+
+                route: Object,
+
+
+
+                link: {
+                    type: String,
+                    observer: '_linkChanged',
+                    value: 'https://soundcloud.com/21savage/sets/savage-mode-21-savage-metro'
+                },
+
+                importNotReady: {
+                    type: Boolean,
+                    value: true
+                },
 
             },
 
             observers: [
                 '_changed(items)',
+                '_params(route.*)'
 
             ],
 
             _changed: function(items) {
-                // console.log(items);
+                // console.info(items);
+            },
+
+            _computeFabShow: function() {
+                // console.log(this.page !== "home");
+                return this.page !== "home";
+            },
+
+            _computeSaveShow: function() {
+                console.log(this.page !== "home");
+                return this.page !== "home";
+            },
+
+
+            _linkChanged: function(link) {
+                // console.info(link.match('https:\/\/soundcloud.com'));
+
+                if (link.match('https:\/\/soundcloud.com')) {
+                    SC.resolve(link).then(function(info) {
+                        this.set('importNotReady', false);
+                        this.set('import', info);
+                    });
+                }
+
+                if (link.match(/magnet:\?xt/i)) {
+                    this.reset();
+                    this._magnetUrl(link);
+                    return;
+                }
+
+                if (link.match(/^[a-f0-9]{40}$/ig)) {
+                    this.reset();
+                    this._magnetUrl(link);
+                    return;
+                }
+
+                if (link.match(/^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/)) {
+                    this.reset();
+                    this._youtubeUrl(link);
+                    return;
+                }
+
+
+
+            },
+            _save: function() {
+                if (this._validateForm()) {
+                    this.debounce('_submitForm', function() {
+                        this.$.dlxfirebase.save(newItem);
+                    }, 1000);
+                }
+            },
+
+            _validateForm: function() {
+                var form = this.$.newItemForm;
+                var firstInvalid = false;
+
+                for (var el, i = 0; el = form.elements[i], i < form.elements.length; i++) {
+                    if (el.checkValidity()) {
+                        el.removeAttribute('aria-invalid');
+                    } else {
+                        if (!firstInvalid) {
+                            // announce error message
+                            if (el.nextElementSibling) {
+                                this.fire('announce', el.nextElementSibling.getAttribute('error-message'));
+                            }
+                            if (el.scrollIntoViewIfNeeded) {
+                                // safari, chrome
+                                el.scrollIntoViewIfNeeded();
+                            } else {
+                                // firefox, edge, ie
+                                el.scrollIntoView(false);
+                            }
+                            el.focus();
+                            firstInvalid = true;
+                        }
+                        el.setAttribute('aria-invalid', 'true');
+                    }
+                }
+
+                return !firstInvalid;
+            },
+
+            _params: function(route) {
+                if (route.path === "route.__queryParams") {
+                    // console.info(route.value.page);
+                    if (route.value.page) {
+                        this.page = route.value.page;
+                    } else {
+                        this.page = "home";
+                    }
+                }
             },
 
 

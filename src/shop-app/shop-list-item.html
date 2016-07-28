@@ -1,0 +1,123 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<dom-module id="shop-list-item">
+
+    <template>
+
+        <style>
+            :host {
+                @apply(--layout-vertical);
+                @apply(--layout-center-justified);
+                text-align: center;
+                /*margin: 0 48px;*/
+            }
+
+            dlx-block {
+                margin: 32px 0 16px;
+            }
+
+            /*dlx-block::before {
+                content: "";
+                display: block;
+                padding-top: 100%;
+            }*/
+
+            .title {
+                color: var(--app-primary-color);
+                font-weight: bold;
+            }
+
+            .price {
+                color: var(--app-secondary-color);
+            }
+
+            @media (max-width: 767px) {
+                :host {
+                    margin: 0 12px;
+                }
+            }
+        </style>
+
+        <dlx-firebase path$="/shop/localhost/products/byId/[[itemKey]]" data="{{item}}"></dlx-firebase>
+        <dlx-block src="{{item.image}}" alt="[[item.title]]"></dlx-block>
+        <div class="title">[[item.title]]</div>
+        <span class="price">[[_formatPrice(item.price)]]</span>
+
+    </template>
+
+    <script>
+        Polymer({
+
+            is: 'shop-list-item',
+
+            properties: {
+                itemKey: String,
+                itemName: String,
+                item: {
+                    type: Object,
+                    notify: true,
+                },
+
+            },
+            observers: [
+                //'_computeItemByKey(itemKey)',
+                //'_computeItemByName(itemName)'
+
+            ],
+
+            _computeItemByKey: function(itemKey) {
+                // console.log(itemKey);
+                let item;
+
+                firebase.database().ref('/shop/' + document.location.hostname + '/products/byId/' + itemKey).on('value', function(snap) {
+                        item = snap.val();
+                        // console.log(item);
+                        if (item.type === 'square-item') {
+                            item.price = item.data.price;
+                            item.title = item.data.name;
+                            // console.log(typeof item.data.master_image !== 'undefined');
+                            if (typeof item.data.master_image !== 'undefined') {
+                                item.image = item.data.master_image.url;
+                                item.largeImage = item.data.master_image.url;
+                            }
+
+
+                            item.description = item.data.description;
+                        }
+                        this.set('item', null);
+                        this.set('item', item);
+                        this.failure = false;
+                    }
+                    .bind(this));
+
+
+
+            },
+
+            _computeItemByName: function(itemName) {
+                console.log(itemName);
+                let item;
+
+
+
+                firebase.database().ref('/shop/' + document.location.hostname + '/products/byName/' + itemName).on('value', function(snap) {
+                        itemKey = snap.val();
+                        console.log(itemKey);
+                        this.set('itemKey', item.key);
+                    }
+                    .bind(this));
+
+
+
+
+            },
+
+            _formatPrice: function(price) {
+                return price ? '$' + price.toFixed(2) : '';
+            }
+
+        });
+    </script>
+
+</dom-module>

@@ -35,6 +35,17 @@
         outline: none;
       }
 
+
+      dlx-input > textarea {
+        font-size: 1em;
+        font-weight: 300;
+        color: var(--app-primary-color);
+        border: none;
+        padding: 8px 0;
+        width: 100%;
+        outline: none;
+      }
+
       dlx-input > input:invalid {
         /* reset the default style in FF */
         box-shadow: none;
@@ -105,8 +116,21 @@
         transition: transform 0.2s ease-out;
       }
 
+      dlx-input > textarea:focus + dlx-md-decorator > dlx-underline {
+        -webkit-transform: scale3d(1, 1, 1);
+        transform: scale3d(1, 1, 1);
+        transition: -webkit-transform 0.2s ease-out;
+        transition: transform 0.2s ease-out;
+      }
+
       /* Label: valid state */
       dlx-input > input:focus + dlx-md-decorator > label {
+        -webkit-transform: translate3d(0px, -3.4em, 0px) scale(0.8, 0.8);
+        transform: translate3d(0px, -3.4em, 0px) scale(0.8, 0.8);
+        opacity: 1;
+      }
+
+      dlx-input > textarea:focus + dlx-md-decorator > label {
         -webkit-transform: translate3d(0px, -3.4em, 0px) scale(0.8, 0.8);
         transform: translate3d(0px, -3.4em, 0px) scale(0.8, 0.8);
         opacity: 1;
@@ -117,14 +141,29 @@
         transform: translate3d(0px, -3.4em, 0px) scale(0.8, 0.8);
         opacity: 1;
       }
+      dlx-input > textarea:optional:not(:placeholder-shown) + dlx-md-decorator > label {
+        -webkit-transform: translate3d(0px, -3.4em, 0px) scale(0.8, 0.8);
+        transform: translate3d(0px, -3.4em, 0px) scale(0.8, 0.8);
+        opacity: 1;
+      }
 
       _:-ms-lang(x), dlx-input > input + dlx-md-decorator > label {
         -webkit-transform: translate3d(0px, -3.4em, 0px) scale(0.8, 0.8);
         transform: translate3d(0px, -3.4em, 0px) scale(0.8, 0.8);
         opacity: 1;
       }
+      _:-ms-lang(x), dlx-input > textarea + dlx-md-decorator > label {
+        -webkit-transform: translate3d(0px, -3.4em, 0px) scale(0.8, 0.8);
+        transform: translate3d(0px, -3.4em, 0px) scale(0.8, 0.8);
+        opacity: 1;
+      }
 
       dlx-input > input:optional:-moz-ui-valid + dlx-md-decorator > label {
+        -webkit-transform: translate3d(0px, -3.4em, 0px) scale(0.8, 0.8);
+        transform: translate3d(0px, -3.4em, 0px) scale(0.8, 0.8);
+        opacity: 1;
+      }
+      dlx-input > textarea:optional:-moz-ui-valid + dlx-md-decorator > label {
         -webkit-transform: translate3d(0px, -3.4em, 0px) scale(0.8, 0.8);
         transform: translate3d(0px, -3.4em, 0px) scale(0.8, 0.8);
         opacity: 1;
@@ -139,7 +178,22 @@
         transition: transform 0.2s ease-out;
       }
 
+      dlx-input > textarea:not(:focus):not(:placeholder-shown):invalid + dlx-md-decorator > dlx-underline {
+        background-color: #dd2c00;
+        -webkit-transform: scale3d(1, 1, 1);
+        transform: scale3d(1, 1, 1);
+        transition: -webkit-transform 0.2s ease-out;
+        transition: transform 0.2s ease-out;
+      }
+
       dlx-input > input:not(:focus):-moz-ui-invalid:invalid + dlx-md-decorator > dlx-underline {
+        background-color: #dd2c00;
+        -webkit-transform: scale3d(1, 1, 1);
+        transform: scale3d(1, 1, 1);
+        transition: -webkit-transform 0.2s ease-out;
+        transition: transform 0.2s ease-out;
+      }
+      dlx-input > textarea:not(:focus):-moz-ui-invalid:invalid + dlx-md-decorator > dlx-underline {
         background-color: #dd2c00;
         -webkit-transform: scale3d(1, 1, 1);
         transform: scale3d(1, 1, 1);
@@ -155,16 +209,33 @@
         transition: transform 0.2s ease-out;
       }
 
+      dlx-input > textarea[aria-invalid='true']:not(:valid) + dlx-md-decorator > dlx-underline {
+        background-color: #dd2c00;
+        -webkit-transform: scale3d(1, 1, 1);
+        transform: scale3d(1, 1, 1);
+        transition: -webkit-transform 0.2s ease-out;
+        transition: transform 0.2s ease-out;
+      }
+
       /* Error message */
       dlx-input > input:not(:focus):not(:placeholder-shown):invalid + dlx-md-decorator::after {
+        display: block;
+      }
+      dlx-input > textarea:not(:focus):not(:placeholder-shown):invalid + dlx-md-decorator::after {
         display: block;
       }
 
       dlx-input > input:not(:focus):-moz-ui-invalid:invalid + dlx-md-decorator::after {
         display: block;
       }
+      dlx-input > textarea:not(:focus):-moz-ui-invalid:invalid + dlx-md-decorator::after {
+        display: block;
+      }
 
       dlx-input > input[aria-invalid='true']:not(:valid) + dlx-md-decorator::after {
+        display: block;
+      }
+      dlx-input > textarea[aria-invalid='true']:not(:valid) + dlx-md-decorator::after {
         display: block;
       }
 
@@ -176,7 +247,20 @@
         color: #dd2c00;
       }
 
+      dlx-input > textarea:not(:focus):not(:placeholder-shown):invalid + dlx-md-decorator > label {
+        -webkit-transform: translate3d(0px, -3.4em, 0px) scale(0.8, 0.8);
+        transform: translate3d(0px, -3.4em, 0px) scale(0.8, 0.8);
+        opacity: 1;
+        color: #dd2c00;
+      }
+
       dlx-input > input:not(:focus):-moz-ui-invalid:invalid + dlx-md-decorator > label {
+        -webkit-transform: translate3d(0px, -3.4em, 0px) scale(0.8, 0.8);
+        transform: translate3d(0px, -3.4em, 0px) scale(0.8, 0.8);
+        opacity: 1;
+        color: #dd2c00;
+      }
+      dlx-input > textarea:not(:focus):-moz-ui-invalid:invalid + dlx-md-decorator > label {
         -webkit-transform: translate3d(0px, -3.4em, 0px) scale(0.8, 0.8);
         transform: translate3d(0px, -3.4em, 0px) scale(0.8, 0.8);
         opacity: 1;
@@ -190,8 +274,20 @@
         color: #dd2c00;
       }
 
+      dlx-input > textarea[aria-invalid='true']:not(:valid) + dlx-md-decorator > label {
+        -webkit-transform: translate3d(0px, -3.4em, 0px) scale(0.8, 0.8);
+        transform: translate3d(0px, -3.4em, 0px) scale(0.8, 0.8);
+        opacity: 1;
+        color: #dd2c00;
+      }
+
       /* Valid label */
       dlx-input > input:not(:focus):required:valid + dlx-md-decorator > label {
+        -webkit-transform: translate3d(0px, -3.4em, 0px) scale(0.8, 0.8);
+        transform: translate3d(0px, -3.4em, 0px) scale(0.8, 0.8);
+        opacity: 1;
+      }
+      dlx-input > texts:not(:focus):required:valid + dlx-md-decorator > label {
         -webkit-transform: translate3d(0px, -3.4em, 0px) scale(0.8, 0.8);
         transform: translate3d(0px, -3.4em, 0px) scale(0.8, 0.8);
         opacity: 1;

@@ -1,9 +1,7 @@
 {
   "entrypoint": "index.html",
-  "shell": "src/web-shell/web-shell.html",
+  "shell": "src/bmw-app/bmw-app.html",
   "fragments":[
-    "src/web-shell/page-video.html",
-    "src/dlx-video/dlx-video.html"
-
+    "src/web-shell/page-video.html"
   ]
 }

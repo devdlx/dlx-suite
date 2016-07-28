@@ -48,16 +48,17 @@
                 width: 60%;
             }
 
-            dlx-block::before {
-                content: "";
-                display: block;
-                padding-top: 100%;
-            }
-
             .detail {
                 padding: 24px;
                 margin: 0 42px;
                 width: 50%;
+                max-width: 404px;
+            }
+
+            .detail2 {
+                padding: 24px;
+                margin: 0 42px;
+                width: 100%;
                 max-width: 404px;
             }
 
@@ -69,6 +70,10 @@
 
             .detail .meta-data {
                 width: calc(100% - 116px);
+            }
+
+            .detail .meta-data h1 {
+              margin: 0;
             }
 
             .detail .meta-image {
@@ -173,6 +178,8 @@
                 h1 {
                     font-size: 20px;
                     line-height: 24px;
+
+                    margin: 0
                 }
                 /*.price {
                     font-size: inherit;
@@ -192,7 +199,7 @@
 
         <paper-spinner-lite active="[[waiting]]"></paper-spinner-lite>
 
-        <div id="content" hiddenFFF$="[[signedIn]]">
+        <div id="content" hidden$="[[signedIn]]">
 
             <div class="detail">
 
@@ -200,10 +207,10 @@
                     <div class="meta-data">
                         <h1>[[user.title]]</h1>
                         <div class="meta-header" hidden="[[!user.meta.header]]">user.meta.header</div>
-                        <div class="meta-text">user.meta.text</div>
+                        <div class="meta-text">{{user.email}}</div>
                     </div>
                     <div class="meta-image">
-                        <dlx-block alt="[[user.meta]] [[user.title]]" src="[[user.poster_path]]" text="open"></dlx-block>
+                        <dlx-block alt="[[user.meta]] [[user.title]]" src="[[user.poster_path]]"></dlx-block>
                     </div>
                 </div>
 
@@ -343,10 +350,25 @@
 
         </div>
 
-        <!--
-      dlx-network-warning shows a warning message when the items can't be rendered due
-      to network conditions.
-    -->
+        <div id="content" hidden$="[[!signedIn]]">
+            <div class="detail2">
+                <div class="meta-container">
+                  <div class="meta-image">
+                      <dlx-block alt="[[user.meta]] [[user.title]]" src="[[user.photoURL]]"></dlx-block>
+                  </div>
+                    <div class="meta-data">
+                        <h1>[[user.displayName]]</h1>
+                        <div class="meta-header" hidden="[[!user.meta.header]]">user</div>
+                        <div class="meta-text">{{user.email}}</div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+
+
         <dlx-network-warning hidden$="[[!failure]]" offline="[[offline]]" on-try-reconnect="_tryReconnect"></dlx-network-warning>
 
     </template>
@@ -425,11 +447,11 @@
             ],
             _visibleChanged: function(visible, routeDataDetail) {
                 let action = routeDataDetail.action;
-                console.log(routeDataDetail);
+                // console.log(routeDataDetail);
                 if (visible && action === 'logout') {
                     this.async(() => {
-                        this.$.auth.logout().then(()=>{
-                          window.history.replaceState('page2', 'Title','/signin');
+                        this.$.auth.logout().then(() => {
+                            window.history.replaceState('page2', 'Title', '/signin');
                         });
                     }, 0);
 
@@ -488,8 +510,8 @@
                     // });
 
                     // console.log(this.$.signinForm);
-                    this.$.auth.signIn(info.accountEmail, info.accountPassword).then(()=>{
-                      window.history.replaceState('page2', 'Title','/signin');
+                    this.$.auth.signIn(info.accountEmail, info.accountPassword).then(() => {
+                        window.history.replaceState('page2', 'Title', '/signin');
                     });
 
                     // this.debounce('_submitForm', function() {

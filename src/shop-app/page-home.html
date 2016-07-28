@@ -1,0 +1,133 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+
+<link rel="import" href="shop-button.html">
+<link rel="import" href="../dlx-block/dlx-block.html">
+<link rel="import" href="../dlx-firebase/dlx-firebase.html">
+<link rel="import" href="../dlx-styles/dlx-styles.html">
+
+
+
+<dom-module id="page-home">
+
+    <template>
+
+        <style include="shop-button dlx-common-styles">
+            .item {
+                display: block;
+                text-decoration: none;
+                text-align: center;
+                margin-bottom: 40px;
+            }
+
+            dlx-block {
+                position: relative;
+                height: 320px;
+                overflow: hidden;
+                --dlx-block-img: {
+                    position: absolute;
+                    top: 0;
+                    bottom: 0;
+                    left: -9999px;
+                    right: -9999px;
+                    max-width: none;
+                }
+                ;
+            }
+
+            h2 {
+                font-size: 1.3em;
+                font-weight: 500;
+                margin: 0;
+                text-align: center;
+            }
+
+            .grid {
+                /*padding-top: 16px;*/
+                /*padding-left: 16px;
+          padding-right: 16px;*/
+            }
+
+            .grid-item-full {
+                margin-top: 16px;
+                position: relative;
+                /*padding-left: 16px;
+          padding-right: 16px;*/
+                width: 100%;
+                max-width: none;
+            }
+
+            .grid-item-full .text {
+                position: absolute;
+                bottom: 0;
+                padding: 16px;
+                color: white;
+            }
+        </style>
+
+
+        <!-- <shop-data id="sd" query="/pages/home/items" items="{{items}}"></shop-data> -->
+
+        <app-location route="{{route}}"></app-location>
+        <dlx-firebase id="home-items-query" query="/shop/localhost/pages/home/items" items="{{items}}" id-path="/shop/localhost/categories/byId"></dlx-firebase>
+
+
+        <div class="grid" hidden$="[[failure]]">
+            <template is="dom-repeat" items="[[items]]" initial-count="4">
+                <div class="grid-item-full">
+                    <a class="image-link" href$="/list/[[item.name]]" aria-label$="[[item.title]]">
+                        <dlx-block src="[[item.image]]" alt="[[item.title]]" placeholder-img="[[item.placeholder]]"></dlx-block>
+                    </a>
+                    <h2 class="text">[[item.title]]</h2>
+
+                </div>
+            </template>
+        </div>
+
+    </template>
+
+    <script>
+        Polymer({
+
+            is: 'page-home',
+
+            properties: {
+
+                items: {
+                    type: Array,
+                },
+
+                visible: {
+                    type: Boolean,
+                    observer: '_visibleChanged'
+                }
+
+            },
+
+            observers: [
+                // '_changed(items)',
+
+            ],
+
+            ready: function() {
+                // console.log(this);
+            },
+
+            _changed: function(items) {
+                console.log(items);
+            },
+
+
+            _visibleChanged: function(visible) {
+                // console.log(visible);
+                if (visible) {
+                    this.fire('change-section', {
+                        title: 'Home'
+                    });
+                }
+            }
+
+        });
+    </script>
+
+</dom-module>

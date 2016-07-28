@@ -22,6 +22,8 @@
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 
 <link rel="import" href="../dlx-styles/dlx-icons.html">
+<link rel="import" href="../dlx-styles/dlx-styles.html">
+
 <!-- <link rel="import" href="../dlx-user/dlx-user.html"> -->
 
 <link rel="import" href="page-home.html">
@@ -41,7 +43,7 @@
                 /*padding-bottom: 64px;*/
                 min-height: 100vh;
                 --app-primary-color: #202020;
-                --app-secondary-color: #757575;
+                --app-secondary-color: red;
                 --app-accent-color: #172C50;
                 --paper-button-ink-color: var(--app-accent-color);
                 --paper-icon-button-ink-color: var(--app-accent-color);
@@ -182,7 +184,7 @@
                 margin: 0;
                 display: block;
                 height: 100%;
-                background: rgba(0, 135, 152, 1);
+                background: var(--app-accent-color);
             }
 
             .menu-header:first-of-type {
@@ -232,38 +234,12 @@
                 padding-left: 24px;
             }
 
-            .drawer-list a[bg-color] {
-                background: rgba(0, 135, 152, 0.88);
-            }
-
             .drawer-list a.iron-selected {
-                color: black;
                 font-weight: bold;
-            }
-
-            .drawer-list a[bg-color].iron-selected {
-                /*color: black;*/
-                color: rgba(0, 135, 152, 0.88);
+                color: var(--app-accent-color);
                 background: white;
             }
 
-            .drawer-list .iron-selected.menu-header {
-                color: black;
-                background: white;
-            }
-
-            .drawer-list .iron-selected.menu-header h3 {
-                color: black;
-            }
-
-            .drawer-list [bg-color].iron-selected.menu-header {
-                /*color: black;*/
-                background: white;
-            }
-
-            .drawer-list [bg-color].iron-selected.menu-header h3 {
-                color: rgba(0, 135, 152, 0.88);
-            }
 
             page-cart-modal {
                 z-index: 2;
@@ -310,7 +286,7 @@
             }
         </style>
 
-        <dlx-firebase name="dlxsuite" api-key="AIzaSyAMDWKG7qyQ9msJaaKb7vmvK-rNu3X_7-Q" auth-domain="project-604055857022237684.firebaseapp.com" database-url="https://project-604055857022237684.firebaseio.com" storage-bucket="project-604055857022237684.appspot.com"></dlx-firebase>
+        <dlx-firebase nameFFF="dlxsuite" api-key="AIzaSyAMDWKG7qyQ9msJaaKb7vmvK-rNu3X_7-Q" auth-domain="project-604055857022237684.firebaseapp.com" database-url="https://project-604055857022237684.firebaseio.com" storage-bucket="project-604055857022237684.appspot.com"></dlx-firebase>
         <dlx-firebase path="/dlxsuite" data="{{app}}" user="{{user}}" signed-in="{{signedIn}}"></dlx-firebase>
 
         <dlx-analytics key="{{app.ua}}"></dlx-analytics>
@@ -342,21 +318,21 @@
 
                 <iron-selector role="navigation" class="drawer-list" selected="{{_computeSelectedRoute(subroute)}}" attr-for-selected="subroute">
 
-                    <a subroute="/" href="/" class="menu-header" bg-color>
+                    <a subroute="/" href="/" class="menu-header">
                         <iron-icon class="text-icon" icon="menu"></iron-icon>
                         <span has-icon>Home</span>
                     </a>
 
                     <template is="dom-repeat" items="[[menu]]" as="menuTop">
                         <!-- <template is="dom-if" if="[[_computeHeader(menuTop)]]" restamp="true"> -->
-                        <a subroute="/[[menuTop.page]]/[[menuTop.link]]" href="/[[menuTop.page]]/[[menuTop.link]]" class="menu-header" bg-color>
+                        <a subroute="/[[menuTop.page]]/[[menuTop.link]]" href="/[[menuTop.page]]/[[menuTop.link]]" class="menu-header">
                             <iron-icon class="text-icon" icon="{{menuTop.icon}}"></iron-icon>
                             <span has-icon$="{{menuTop.icon}}"><span>{{menuTop.title}}</span>
                         </a>
                         <!-- </template> -->
 
                         <template is="dom-repeat" items="[[menuTop.items]]" as="menuItem" initial-count="4">
-                            <a has-icon$="{{menuItem.icon}}" subroute="/{{menuItem.page}}/{{menuItem.link}}" href="/[[menuItem.page]]/[[menuItem.link]]" bg-color>
+                            <a has-icon$="{{menuItem.icon}}" subroute="/{{menuItem.page}}/{{menuItem.link}}" href="/[[menuItem.page]]/[[menuItem.link]]">
                                 <iron-icon class="text-icon" icon="{{menuItem.icon}}"></iron-icon>
                                 <span>[[menuItem.title]]</span>
                             </a>
@@ -365,14 +341,14 @@
 
                     <!-- #user -->
                     <template is="dom-if" if="{{signedIn}}" restamp="true">
-                        <a has-icon subroute="/signin/logout" href="/signin/logout" bg-color>
+                        <a has-icon subroute="/signin/logout" href="/signin/logout">
                             <iron-icon class="text-icon" icon="person"></iron-icon>
                             <span>Logout [[user.displayName]]</span>
                         </a>
                     </template>
 
                     <template is="dom-if" if="{{!signedIn}}" restamp="true">
-                        <a has-icon subroute="/signin" href="/signin" bg-color>
+                        <a has-icon subroute="/signin" href="/signin">
                             <iron-icon class="text-icon" icon="person"></iron-icon>
                             <span class="text">Login</span>
                         </a>
@@ -441,7 +417,7 @@
 
                 <iron-pages id="pages" role="main" selected="[[page]]" attr-for-selected="name" selected-attribute="visible">
                     <!-- home view -->
-                    <page-home name="home" categories="{{categories}}" signed-in="{{signedIn}}" user="{{user}}"></page-home>
+                    <page-home name="home" route="[[subroute]]" categories="{{categories}}" signed-in="{{signedIn}}" user="{{user}}"></page-home>
                     <!-- list view of items in a category -->
                     <page-list name="list" route="[[subroute]]" offline="[[offline]]" signed-in="{{signedIn}}" user="{{user}}"></page-list>
                     <!-- detail view of one item -->

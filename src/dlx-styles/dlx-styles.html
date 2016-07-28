@@ -50,7 +50,7 @@
                 left: calc(50% - 14px);
             }
 
-            .grid {
+            /*.grid {
                 margin-top: 40px;
                 @apply(--layout-horizontal);
             }
@@ -102,7 +102,7 @@
                 .grid> section:not(:first-child) {
                     margin-left: 0;
                 }
-            }
+            }*/
 
             dlx-tabs,
             dlx-tab {
@@ -129,6 +129,67 @@
                 text-decoration: none;
                 color: var(--app-primary-color);
             }
+
+
+
+            .hero-image {
+                position: relative;
+                height: 320px;
+                overflow: hidden;
+                margin-bottom: 32px;
+            }
+
+            .hero-image {
+                --shop-image-img: {
+                    position: absolute;
+                    top: 0;
+                    bottom: 0;
+                    left: -9999px;
+                    right: -9999px;
+                    max-width: none;
+                }
+                ;
+            }
+
+            .grid {
+                @apply(--layout-horizontal);
+                @apply(--layout-wrap);
+                @apply(--layout-justified);
+                margin: 0 10px 32px 10px;
+            }
+
+            .grid> .grid-item {
+                -webkit-flex: 1 1;
+                flex: 1 1;
+                -webkit-flex-basis: 33%;
+                flex-basis: 33%;
+                max-width: 33%;
+                text-decoration: none;
+            }
+
+            .grid> .grid-item-full {
+                -webkit-flex: 1 1;
+                flex: 1 1;
+                -webkit-flex-basis: 100%;
+                flex-basis: 100%;
+                max-width: 100%;
+                text-decoration: none;
+            }
+
+            @media (max-width: 640px) {
+                .hero-image {
+                    display: none;
+                }
+                .grid> .grid-item {
+                    -webkit-flex-basis: 50%;
+                    flex-basis: 50%;
+                    max-width: 50%;
+                }
+            }
+
+
+
+
             /*#firebaseui, #ui*/
             /*! Terms: https://developers.google.com/terms */
 
