@@ -1,0 +1,350 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/google-youtube/google-youtube.html">
+<link rel="import" href="../../bower_components/google-castable-video/google-castable-video.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/paper-styles/paper-styles-classes.html">
+
+<link href="../dlx-block/dlx-block.html" rel="import">
+
+<!-- <link rel="import" href="shop-button.html">
+<link rel="import" href="shop-category-data.html">
+<link rel="import" href="shop-common-styles.html">
+<link rel="import" href="dlx-block.html">
+<link rel="import" href="shop-select.html"> -->
+
+<dom-module id="page-user">
+
+    <template>
+
+        <style include="dlx-common-styles">
+            :host {
+                display: block;
+                --dlx-video-height: calc(100vw / 1.78);
+            }
+
+            #content {
+                @apply(--layout-vertical);
+                @apply(--layout-center-justified);
+            }
+
+            .page-user {}
+
+            .user-image-container {
+                position: relative;
+                /*margin: 0 0 0 24px;*/
+                /*width: 60%;*/
+            }
+
+            dlx-block {
+                height: 48vh;
+            }
+
+            dlx-blockFFF::before {
+                content: "";
+                display: block;
+                padding-top: 100%;
+            }
+
+            .detail {
+                width: 100%;
+                padding: 24px;
+                /*margin: 0 42px;*/
+                /*width: 50%;*/
+                /*max-width: 404px;*/
+                transition: opacity 0.4s;
+                opacity: 0;
+            }
+
+            .detail[has-content] {
+                opacity: 1;
+            }
+
+            .detail .meta-container {
+                @apply(--layout-vertical);
+                position: relative;
+                margin-bottom: 24px;
+            }
+
+            .detail .meta-dataFFF {
+                width: calc(100% - 116px);
+            }
+
+            .detail .meta-imageFFF {
+                height: 108px;
+                width: 108px;
+                position: absolute;
+                top: 0;
+                right: 0;
+            }
+
+            .meta-title {
+                @apply(--paper-font-subhead);
+                font-size: 24px;
+                font-weight: 500;
+                line-height: 28px;
+                margin: 0;
+            }
+
+            .price {
+                margin: 16px 0 40px;
+                font-size: 16px;
+                color: var(--app-secondary-color);
+            }
+
+            .meta-header {
+                @apply(--paper-font-body1);
+                margin: 0;
+                /*font-size: 16px;*/
+                color: var(--app-secondary-color);
+            }
+
+            .meta-text {
+                @apply(--paper-font-caption);
+                margin: 0;
+                /*font-size: 12px;*/
+                color: var(--app-secondary-color);
+            }
+
+            .description {
+                /*margin: 0 0 32px 0;*/
+            }
+
+            .description> h4 {
+                /*margin: 0 0 12px 0;*/
+            }
+
+            .description> p {
+                margin: 0;
+                color: var(--app-secondary-color);
+            }
+
+            .pickers {
+                @apply(--layout-vertical);
+                /*border-top: 1px solid #ccc;*/
+            }
+
+            shop-select> select {
+                font-size: 16px;
+                padding: 16px 24px 16px 70px;
+            }
+
+            @media (max-width: 640px) {
+                #content {
+                    @apply(--layout-vertical);
+                    @apply(--layout-center);
+                }
+                .user-image-container {
+                    margin: 0;
+                    width: 100%;
+                }
+                /* #mobile */
+                .user-image-container {
+                    /*position: fixed;*/
+                    /*top: 64px;*/
+                    z-index: 1;
+                }
+                #content {
+                    /*margin-top: var(--dlx-video-height);*/
+                }
+                .detail {
+                    box-sizing: border-box;
+                    /*         margin: 32px 0; */
+                    /*         padding: 0 24px; */
+                    /*width: 100%;*/
+                    /*max-width: 600px;*/
+                }
+                .detail .meta-container {
+                    @apply(--layout-horizontal);
+                    position: relative;
+                }
+                .detail .meta-imageFFF {
+                    height: 108px;
+                    width: 108px;
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                }
+                h1 {
+                    font-size: 20px;
+                    line-height: 24px;
+                }
+                /* .price {
+        font-size: inherit;
+        margin: 12px 0 32px;
+    } */
+            }
+        </style>
+
+        <!--
+      app-route provides the name of the category and the item.
+    -->
+        <app-route route="[[route]]" pattern="/:link" data="{{routeDataDetail}}"></app-route>
+
+        <!--
+      shop-category-data provides the item data for a given category and item name.
+    -->
+        <!--     <shop-category-data
+        id="categoryData"
+        category-name="[[routeData.category]]"
+        item-name="[[routeData.item]]"
+        item="{{item}}"
+        failure="{{failure}}"></shop-category-data> -->
+
+
+        <div id="content" hidden$="[[failure]]">
+            <!--       <dlx-block alt="[[item.title]]" src="[[item.largeImage]]"></dlx-block> -->
+
+            <div class="user-image-container">
+                <dlx-block src="{{user.photoURL}}" textFFF="{{user.displayName}}"></dlx-block>
+            </div>
+
+
+            <div class="detail" has-content$="[[_isDefined(user)]]">
+
+                <div class="meta-container">
+                    <div class="meta-data">
+                        <h1>[[user.displayName]]</h1>
+                        <div class="meta-header" hidden="[[!user]]">[[user.email]]</div>
+                        <div class="meta-text">[[user.photoURL]]</div>
+                    </div>
+                    <!-- <div class="meta-image">
+                        <dlx-block alt="[[user.meta]] [[user.title]]" src="[[user.poster_path]]"></dlx-block>
+                    </div> -->
+                </div>
+
+
+                <div class="pickers">
+                    <h4>pickers</h4>
+                </div>
+
+
+                <div class="description" hidden$="[[!user.description]]">
+                    <h4>Description</h4>
+                    <p id="desc">{{user.description}}</p>
+                </div>
+
+
+
+                <!--         <shop-button responsive>
+          <button on-tap="_addToCart" aria-label="Add this item to cart">Add to Cart</button>
+        </shop-button> -->
+            </div>
+        </div>
+
+        <!--
+      shop-network-warning shows a warning message when the items can't be rendered due
+      to network conditions.
+    -->
+        <shop-network-warning hidden$="[[!failure]]" offline="[[offline]]" on-try-reconnect="_tryReconnect"></shop-network-warning>
+
+    </template>
+
+    <script>
+        Polymer({
+            is: 'page-user',
+            properties: {
+                user: Object,
+                route: Object,
+                routeDataDetail: Object,
+                visible: Boolean,
+                offline: {
+                    type: Boolean,
+                    observer: '_offlineChanged'
+                },
+                youtubeId: {
+                    type: String,
+                    notify: true,
+                    //value: 'AtqaiYlqs7c'
+                },
+                link: {
+                    type: String,
+                    notify: true,
+                    //value:''
+                },
+                failure: {
+                    type: Boolean,
+                    notify: true,
+                    value: false
+                },
+            },
+            observers: [
+                '_link(visible, routeDataDetail)'
+            ],
+            _link: function(visible, routeDataDetail) {
+                console.log(routeDataDetail);
+                if (!routeDataDetail) {
+                    return;
+                }
+
+
+                // this.importHref(["dlx/dlx-video.html"], function() {
+                //     console.log(dlxVideo);
+                // });
+
+
+                this.set('link', routeDataDetail.link);
+
+
+                if (visible && this.user) {
+                    this.debounce('item-change', function() {
+                        // The item description contains escaped HTML (e.g. "&lt;br&gt;"), so we need to
+                        // unescape it ("<br>") and set it as innerHTML.
+                        var text = this.user.description || '';
+                        this.$.desc.innerHTML = this._unescapeText(text);
+                        this.fire('change-section', {
+                            title: 'User: '+user.displayName
+                        });
+                    });
+                }
+
+
+            },
+            _youtube: function(youtubeId, route, visible) {
+                //console.log(youtubeId);
+                if (route.prefix !== '/video') {
+                    return;
+                }
+                //this._fetchYoutube(youtubeId, 1);
+                if (visible && this.user) {
+                    this.debounce('item-change', function() {
+                        // The item description contains escaped HTML (e.g. "&lt;br&gt;"), so we need to
+                        // unescape it ("<br>") and set it as innerHTML.
+                        var text = this.user ? this.user.description : '';
+                        this.$.desc.innerHTML = this._unescapeText(text);
+                        this.fire('change-section', {
+                            title: user.name
+                        });
+                    });
+                }
+            },
+            _unescapeText: function(text) {
+                var elem = document.createElement('textarea');
+                elem.innerHTML = text;
+                return elem.textContent;
+            },
+            _formatPrice: function(price) {
+                return price ? '$' + price.toFixed(2) : '';
+            },
+
+            _isDefined: function(item) {
+                return item != null;
+            },
+            _tryReconnect: function() {
+                //this.$.categoryData.refresh();
+                console.log(offline);
+            },
+            _offlineChanged: function(offline) {
+                console.log(offline);
+                if (!offline) {
+                    //this._tryReconnect();
+                    this.failure = false;
+                } else {
+                    this.failure = true;
+                }
+            },
+        });
+    </script>
+
+</dom-module>
